@@ -1,10 +1,18 @@
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+const range = document.querySelector("#jsRange");
+const colors = document.querySelectorAll("#jsColor"); //다중선택 => querySelectorAll
+const mode = document.querySelector("#jsMode");
+const save = document.querySelector("#jsSave");
 
 let pointer = false;
+let filling = false;
 
 canvas.width = 700;
 canvas.height = 700;
+
+ctx.fillStyle = "white";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 ctx.strokeStyle = "black";
 ctx.lineWidth = 5;
@@ -27,6 +35,38 @@ function pointerFalse() {
 
 function pointerTrue() {
   pointer = true;
+  if (filling) {
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+function handleRange(event) {
+  const currentValue = event.target.value;
+  ctx.lineWidth = currentValue;
+}
+
+function handleColor(event) {
+  const currentColor = event.target.style.backgroundColor;
+  ctx.strokeStyle = currentColor;
+}
+
+function handleMode(event) {
+  if (filling === false) {
+    event.target.innerText = "PAINT";
+    filling = true;
+  } else {
+    event.target.innerText = "FILL";
+    filling = false;
+  }
+}
+
+function saveImage() {
+  const image = canvas.toDataURL();
+  const link = document.createElement("a");
+  link.href = image;
+  link.download = "Painting_Result🎨";
+  link.click();
 }
 
 function init() {
@@ -34,6 +74,19 @@ function init() {
   canvas.addEventListener("mousemove", painting);
   canvas.addEventListener("mouseup", pointerFalse);
   canvas.addEventListener("mouseout", pointerFalse);
+  canvas.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+  });
+
+  range.addEventListener("input", handleRange);
+
+  Array.from(colors).forEach((color) => {
+    color.addEventListener("click", handleColor);
+  });
+
+  mode.addEventListener("click", handleMode);
+
+  save.addEventListener("click", saveImage);
 }
 
 init();
