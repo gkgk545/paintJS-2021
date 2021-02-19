@@ -35,10 +35,6 @@ function pointerFalse() {
 
 function pointerTrue() {
   pointer = true;
-  if (filling) {
-    ctx.fillStyle = ctx.strokeStyle;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
 }
 
 function handleRange(event) {
@@ -49,6 +45,7 @@ function handleRange(event) {
 function handleColor(event) {
   const currentColor = event.target.style.backgroundColor;
   ctx.strokeStyle = currentColor;
+  ctx.fillStyle = currentColor;
 }
 
 function handleMode(event) {
@@ -58,6 +55,12 @@ function handleMode(event) {
   } else {
     event.target.innerText = "FILL";
     filling = false;
+  }
+}
+
+function fillCanvas() {
+  if (filling) {
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 }
 
@@ -85,6 +88,7 @@ function init() {
   });
 
   mode.addEventListener("click", handleMode);
+  canvas.addEventListener("click", fillCanvas);
 
   save.addEventListener("click", saveImage);
 }
